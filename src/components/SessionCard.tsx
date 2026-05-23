@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Clock, Activity } from 'lucide-react';
 import type { TradingSession } from '../data/sessions';
-import { isSessionActive, getSessionProgress, getSessionDurationMinutes, formatTime } from '../data/sessions';
+import { isSessionActive, getSessionProgress, getSessionDurationMinutes, formatSessionTimeLocal } from '../data/sessions';
 
 interface SessionCardProps {
   session: TradingSession;
@@ -13,6 +13,7 @@ export function SessionCard({ session, now, index }: SessionCardProps) {
   const active = isSessionActive(session, now);
   const progress = getSessionProgress(session, now);
   const duration = getSessionDurationMinutes(session);
+  const timeRange = formatSessionTimeLocal(session, now);
 
   return (
     <motion.div
@@ -51,9 +52,7 @@ export function SessionCard({ session, now, index }: SessionCardProps) {
 
       <div className="session-card-time">
         <Clock size={14} />
-        <span className="session-time-range">
-          {formatTime(session.startHour, session.startMinute)} – {formatTime(session.endHour, session.endMinute)}
-        </span>
+        <span className="session-time-range">{timeRange}</span>
         <span className="session-duration">{duration} min</span>
       </div>
 

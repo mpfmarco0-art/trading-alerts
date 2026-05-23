@@ -1,3 +1,5 @@
+import { isLisbonWeekday, utcHourToLisbon } from './timezone';
+
 export interface TradingSession {
   id: string;
   name: string;
@@ -72,6 +74,12 @@ export const SESSIONS: TradingSession[] = [
   },
 ];
 
+export function getSessionLocalTimes(session: TradingSession, now: Date) {
+  const start = utcHourToLisbon(session.startHour, session.startMinute, now);
+  const end = utcHourToLisbon(session.endHour, session.endMinute, now);
+  return { start, end };
+}
+
 export function getSessionDurationMinutes(session: TradingSession): number {
   const startMinutes = session.startHour * 60 + session.startMinute;
   const endMinutes = session.endHour * 60 + session.endMinute;
@@ -97,8 +105,7 @@ export function getSessionProgress(session: TradingSession, now: Date): number {
 }
 
 export function isWeekday(now: Date): boolean {
-  const day = now.getUTCDay();
-  return day >= 1 && day <= 5;
+  return isLisbonWeekday(now);
 }
 
 export function getNextSessionEvent(now: Date): { session: TradingSession; type: 'open' | 'close'; minutesUntil: number } | null {
@@ -132,4 +139,9 @@ export function getNextSessionEvent(now: Date): { session: TradingSession; type:
 
 export function formatTime(hour: number, minute: number): string {
   return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+}
+
+export function formatSessionTimeLocal(session: TradingSession, now: Date): string {
+  const { start, end } = getSessionLocalTimes(session, now);
+  return `${formatTime(start.hour, start.minute)} – ${formatTime(end.hour, end.minute)}`;
 }

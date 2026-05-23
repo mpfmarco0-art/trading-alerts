@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { TrendingUp, Volume2, VolumeX } from 'lucide-react';
+import { getTimezoneShort } from '../data/timezone';
+import { useClock } from '../hooks/useClock';
 
 interface HeaderProps {
   soundEnabled: boolean;
@@ -7,6 +9,9 @@ interface HeaderProps {
 }
 
 export function Header({ soundEnabled, onToggleSound }: HeaderProps) {
+  const now = useClock();
+  const tzShort = getTimezoneShort(now);
+
   return (
     <motion.header
       className="header"
@@ -34,7 +39,7 @@ export function Header({ soundEnabled, onToggleSound }: HeaderProps) {
         </button>
         <div className="timezone-badge">
           <span className="timezone-dot" />
-          GMT/UTC
+          {tzShort}
         </div>
       </div>
     </motion.header>
