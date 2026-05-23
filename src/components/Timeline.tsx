@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import { SESSIONS, getSessionLocalTimes } from '../data/sessions';
-import { getLisbonHours, getLisbonMinutes, getTimezoneShort } from '../data/timezone';
+import { SESSIONS } from '../data/sessions';
 
 interface TimelineProps {
   now: Date;
@@ -9,9 +8,8 @@ interface TimelineProps {
 const TOTAL_MINUTES = 24 * 60;
 
 export function Timeline({ now }: TimelineProps) {
-  const currentMinutes = getLisbonHours(now) * 60 + getLisbonMinutes(now);
+  const currentMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
   const nowPercent = (currentMinutes / TOTAL_MINUTES) * 100;
-  const tzShort = getTimezoneShort(now);
 
   const hours = [0, 3, 6, 9, 12, 15, 18, 21];
 
@@ -24,7 +22,7 @@ export function Timeline({ now }: TimelineProps) {
     >
       <h2 className="section-title">
         <span className="section-icon">📊</span>
-        Timeline 24H ({tzShort})
+        Timeline 24H (UTC)
       </h2>
 
       <div className="timeline-container">
@@ -43,9 +41,8 @@ export function Timeline({ now }: TimelineProps) {
 
         <div className="timeline-track">
           {SESSIONS.map((session, i) => {
-            const { start, end } = getSessionLocalTimes(session, now);
-            const startPercent = ((start.hour * 60 + start.minute) / TOTAL_MINUTES) * 100;
-            const endPercent = ((end.hour * 60 + end.minute) / TOTAL_MINUTES) * 100;
+            const startPercent = ((session.startHour * 60 + session.startMinute) / TOTAL_MINUTES) * 100;
+            const endPercent = ((session.endHour * 60 + session.endMinute) / TOTAL_MINUTES) * 100;
             const width = endPercent - startPercent;
 
             return (
@@ -62,7 +59,7 @@ export function Timeline({ now }: TimelineProps) {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
-                title={`${session.name}: ${start.hour.toString().padStart(2, '0')}:${start.minute.toString().padStart(2, '0')} - ${end.hour.toString().padStart(2, '0')}:${end.minute.toString().padStart(2, '0')}`}
+                title={`${session.name}: ${session.startHour.toString().padStart(2, '0')}:${session.startMinute.toString().padStart(2, '0')} - ${session.endHour.toString().padStart(2, '0')}:${session.endMinute.toString().padStart(2, '0')}`}
               >
                 <span className="timeline-bar-label">{session.name}</span>
               </motion.div>
@@ -75,7 +72,7 @@ export function Timeline({ now }: TimelineProps) {
           >
             <div className="timeline-now-line" />
             <span className="timeline-now-label">
-              {getLisbonHours(now).toString().padStart(2, '0')}:{getLisbonMinutes(now).toString().padStart(2, '0')}
+              {now.getUTCHours().toString().padStart(2, '0')}:{now.getUTCMinutes().toString().padStart(2, '0')}
             </span>
           </div>
         </div>
