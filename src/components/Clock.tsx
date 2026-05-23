@@ -1,12 +1,10 @@
 import { motion } from 'framer-motion';
 import { isWeekday, SESSIONS, isSessionActive, getNextSessionEvent } from '../data/sessions';
+import { getLisbonHours, getLisbonMinutes, getLisbonSeconds, getLisbonWeekday, getLisbonDay, getLisbonMonth, getLisbonYear, getTimezoneLabel } from '../data/timezone';
 
 interface ClockProps {
   now: Date;
 }
-
-const WEEKDAYS_PT = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-const MONTHS_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
 function formatCountdown(minutes: number): string {
   const h = Math.floor(minutes / 60);
@@ -16,14 +14,15 @@ function formatCountdown(minutes: number): string {
 }
 
 export function Clock({ now }: ClockProps) {
-  const hours = now.getUTCHours().toString().padStart(2, '0');
-  const minutes = now.getUTCMinutes().toString().padStart(2, '0');
-  const seconds = now.getUTCSeconds().toString().padStart(2, '0');
+  const hours = getLisbonHours(now).toString().padStart(2, '0');
+  const minutes = getLisbonMinutes(now).toString().padStart(2, '0');
+  const seconds = getLisbonSeconds(now).toString().padStart(2, '0');
 
-  const weekday = WEEKDAYS_PT[now.getUTCDay()];
-  const day = now.getUTCDate();
-  const month = MONTHS_PT[now.getUTCMonth()];
-  const year = now.getUTCFullYear();
+  const weekday = getLisbonWeekday(now);
+  const day = getLisbonDay(now);
+  const month = getLisbonMonth(now);
+  const year = getLisbonYear(now);
+  const tzLabel = getTimezoneLabel(now);
 
   const marketsOpen = isWeekday(now);
   const activeSessions = SESSIONS.filter(s => isSessionActive(s, now));
@@ -49,7 +48,7 @@ export function Clock({ now }: ClockProps) {
 
       <div className="clock-label">
         <span className="clock-label-dot" />
-        Hora Universal Coordenada
+        Hora de Portugal — {tzLabel}
       </div>
 
       <p className="clock-date">
@@ -68,7 +67,7 @@ export function Clock({ now }: ClockProps) {
         <div className="market-status market-closed">
           <span className="status-icon">🔒</span>
           MERCADOS FECHADOS
-          <span className="market-reopen">Os mercados reabrem segunda-feira às 00:00 UTC</span>
+          <span className="market-reopen">Os mercados reabrem segunda-feira</span>
         </div>
       )}
 
