@@ -1,14 +1,11 @@
 import { motion } from 'framer-motion';
-import { SESSIONS, isSessionActive, formatSessionTimeLocal } from '../data/sessions';
-import { getTimezoneShort } from '../data/timezone';
+import { SESSIONS, isSessionActive, formatTime } from '../data/sessions';
 
 interface SessionTableProps {
   now: Date;
 }
 
 export function SessionTable({ now }: SessionTableProps) {
-  const tzShort = getTimezoneShort(now);
-
   return (
     <motion.section
       className="table-section"
@@ -26,7 +23,7 @@ export function SessionTable({ now }: SessionTableProps) {
           <thead>
             <tr>
               <th>Sessão</th>
-              <th>Horário ({tzShort})</th>
+              <th>Horário (GMT/UTC)</th>
               <th>Características</th>
               <th>Ativos Principais</th>
               <th>Estado</th>
@@ -50,7 +47,7 @@ export function SessionTable({ now }: SessionTableProps) {
                     </div>
                   </td>
                   <td className="table-time">
-                    {formatSessionTimeLocal(session, now)}
+                    {formatTime(session.startHour, session.startMinute)} – {formatTime(session.endHour, session.endMinute)}
                   </td>
                   <td>{session.characteristics}</td>
                   <td>{session.assets.join(', ')}</td>
