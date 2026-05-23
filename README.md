@@ -48,3 +48,4 @@ npm run build
 ## Deploy
 
 O output de build fica em `dist/`. Pode ser deployado em qualquer plataforma de hosting estático (Vercel, Netlify, Cloudflare Pages, etc.).
+
